@@ -1,3 +1,8 @@
+# @Author: ajay
+# @Date:   Mar 10, 2022
+# @Last modified by:   ajay
+# @Last modified time: Mar 11, 2022
+
 #!/usr/bin/env bash
 
 set -e
@@ -18,7 +23,7 @@ function usage {
 }
 
 CONFIGURATION=Release
-SUPPORT_PLATFORMS=(catalyst ios simulator)
+SUPPORT_PLATFORMS=(catalyst ios mac simulator)
 
 function is_supported_platform(){
     for platform in "${SUPPORT_PLATFORMS[@]}"; do
@@ -40,7 +45,7 @@ PLATFORMS=($@)
 
 if [ -z ${PLATFORMS} ]; then
     echo "No platform given. building all platforms...";
-    PLATFORMS=(ios catalyst simulator)
+    PLATFORMS=(ios catalyst mac simulator)
 else
     echo "Building for...";
     for check_platform in "${PLATFORMS[@]}"; do
@@ -57,7 +62,7 @@ DESTINATIONS=()
 LIBRARIES=()
 BUILD_LIB_CMDS=()
 for platform in "${PLATFORMS[@]}"; do
-    case "$platform" in 
+    case "$platform" in
         ios)
             DESTINATIONS+=(-destination 'generic/platform=iOS')
             LIBRARIES+=(-library ./out/$CONFIGURATION-iphoneos/librealm-js-ios.a -headers ./_include)
@@ -67,6 +72,12 @@ for platform in "${PLATFORMS[@]}"; do
             DESTINATIONS+=(-destination 'platform=macOS,arch=x86_64,variant=Mac Catalyst')
             LIBRARIES+=(-library ./out/$CONFIGURATION-maccatalyst/librealm-js-ios.a -headers ./_include)
             BUILD_LIB_CMDS+=("xcrun libtool -static -o ./out/$CONFIGURATION-maccatalyst/librealm-js-ios.a ./out/$CONFIGURATION-maccatalyst/*.a")
+        ;;
+        mac)
+            SUPPORTS_MACCATALYST=NO
+            DESTINATIONS+=(-destination 'platform=OS X,arch=x86_64')
+            LIBRARIES+=(-library ./out/$CONFIGURATION-macos/librealm-js-ios.a -headers ./_include)
+            BUILD_LIB_CMDS+=("xcrun libtool -static -o ./out/$CONFIGURATION-macos/librealm-js-ios.a ./out/$CONFIGURATION-macos/*.a")
         ;;
         simulator)
             DESTINATIONS+=(-destination 'generic/platform=iOS Simulator')
@@ -97,9 +108,9 @@ xcodebuild build \
     -configuration $CONFIGURATION \
     CC="$PROJECT_ROOT/scripts/ccache-clang.sh" \
     CXX="$PROJECT_ROOT/scripts/ccache-clang++.sh" \
-    ONLY_ACTIVE_ARCH=NO \
+    ONLY_ACTIVE_ARCH=YES \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
-    SUPPORTS_MACCATALYST=YES
+    SUPPORTS_MACCATALYST=NO
 
 for cmd in "${BUILD_LIB_CMDS[@]}"; do
     eval "${cmd}"
