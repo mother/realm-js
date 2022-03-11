@@ -1,8 +1,3 @@
-# @Author: ajay
-# @Date:   Mar 10, 2022
-# @Last modified by:   ajay
-# @Last modified time: Mar 10, 2022
-
 # coding: utf-8
 require 'json'
 
@@ -38,7 +33,6 @@ Pod::Spec.new do |s|
 
   s.authors                = package['author']
   s.homepage               = package['homepage']
-  # s.platform               = :ios, '9.0'
   s.platforms              = { :ios => "9.0", :osx => "10.13" }
 
   # The source field is a required field in the podspec, but it is not ment to be used.

@@ -1,8 +1,3 @@
-# @Author: ajay
-# @Date:   Mar 10, 2022
-# @Last modified by:   ajay
-# @Last modified time: Mar 11, 2022
-
 #!/usr/bin/env bash
 
 set -e
