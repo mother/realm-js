@@ -56,6 +56,7 @@ fi
 DESTINATIONS=()
 LIBRARIES=()
 BUILD_LIB_CMDS=()
+
 for platform in "${PLATFORMS[@]}"; do
     case "$platform" in
         ios)
@@ -69,7 +70,6 @@ for platform in "${PLATFORMS[@]}"; do
             BUILD_LIB_CMDS+=("xcrun libtool -static -o ./out/$CONFIGURATION-maccatalyst/librealm-js-ios.a ./out/$CONFIGURATION-maccatalyst/*.a")
         ;;
         mac)
-            SUPPORTS_MACCATALYST=NO
             DESTINATIONS+=(-destination 'platform=OS X,arch=x86_64')
             LIBRARIES+=(-library ./out/$CONFIGURATION-macos/librealm-js-ios.a -headers ./_include)
             BUILD_LIB_CMDS+=("xcrun libtool -static -o ./out/$CONFIGURATION-macos/librealm-js-ios.a ./out/$CONFIGURATION-macos/*.a")
@@ -105,7 +105,7 @@ xcodebuild build \
     CXX="$PROJECT_ROOT/scripts/ccache-clang++.sh" \
     ONLY_ACTIVE_ARCH=YES \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
-    SUPPORTS_MACCATALYST=NO
+    SUPPORTS_MACCATALYST=YES
 
 for cmd in "${BUILD_LIB_CMDS[@]}"; do
     eval "${cmd}"
